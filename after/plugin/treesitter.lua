@@ -3,6 +3,7 @@ require('nvim-treesitter.configs').setup {
 		'c',
 		'lua',
 		'go',
+		'make',
 	},
 
 	sync_install = false,
