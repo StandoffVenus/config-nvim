@@ -1,0 +1,2 @@
+# Packer likes to make a plugin folder at the root with some sort of cache.
+/plugin/
