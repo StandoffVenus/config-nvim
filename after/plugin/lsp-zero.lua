@@ -14,6 +14,17 @@ lsp.ensure_installed({
 	'gopls',
 })
 
+-- Fix Undefined global 'vim'
+lsp.configure('sumneko_lua', {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
+})
+
 lsp.setup_nvim_cmp({ mapping = cmp_mappings })
 
 lsp.on_attach(function(client, bufnr)
