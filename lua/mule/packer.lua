@@ -1,4 +1,4 @@
-	vim.cmd('packadd packer.nvim')
+vim.cmd('packadd packer.nvim')
 
 local __print = print
 local debug = false
@@ -21,9 +21,12 @@ local plugins = {
 	'tpope/vim-fugitive',
 	'ray-x/go.nvim',
 	'ray-x/guihua.lua',
+	'williamboman/mason.nvim',
 	'neovim/nvim-lspconfig',
 	'hrsh7th/nvim-cmp',
 	'hrsh7th/cmp-nvim-lsp',
+	'saadparwaiz1/cmp_luasnip',
+	'L3MON4D3/LuaSnip',
 	{
 		'nvim-telescope/telescope.nvim',
 		tag = '0.1.0',
