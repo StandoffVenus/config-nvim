@@ -1,9 +1,26 @@
+-- Aliases for language to LSP
+local docker = 'dockerls'
+local lua = 'sumneko_lua'
+local protobuf = 'bufls'
+local go = 'gopls'
+
+require('mason').setup()
+require("mason-lspconfig").setup({
+	ensure_installed = {
+		go,
+		docker,
+		lua,
+	},
+})
+
 local lspconfig = require('lspconfig')
 local cmp_lsp = require('cmp_nvim_lsp')
 
 local lsp_servers = {
-	'gopls',
-	['sumneko_lua'] = {
+	protobuf,
+	docker,
+	go,
+	[lua] = {
 		Lua = {
 			runtime = {
 				version = 'LuaJIT'

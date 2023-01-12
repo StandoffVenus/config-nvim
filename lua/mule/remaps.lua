@@ -8,6 +8,5 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 -- Open terminal in vertical split
 vim.keymap.set('n', '<leader>sh', function()
-	vim.cmd('set splitright')
-	vim.cmd('vs +te')
+	vim.cmd('te')
 end)
