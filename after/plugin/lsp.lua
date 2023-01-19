@@ -55,7 +55,7 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
 
 	vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-	vim.keymap.set('n', '<C-K>', vim.lsp.buf.signature_help, bufopts)
+	vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, bufopts)
 end
 
 -- Set up all the LSP servers

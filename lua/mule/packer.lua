@@ -19,15 +19,28 @@ local plugins = {
 	'wbthomason/packer.nvim', -- Packer can manage itself
 	'preservim/nerdtree',
 	'tpope/vim-fugitive',
-	'ray-x/go.nvim',
-	'ray-x/guihua.lua',
-	'williamboman/mason.nvim',
-	'williamboman/mason-lspconfig.nvim',
-	'neovim/nvim-lspconfig',
-	'hrsh7th/nvim-cmp',
-	'hrsh7th/cmp-nvim-lsp',
-	'saadparwaiz1/cmp_luasnip',
-	'L3MON4D3/LuaSnip',
+	{
+		'hrsh7th/nvim-cmp',
+		requires = {
+			'f3fora/cmp-spell',
+			'hrsh7th/cmp-nvim-lsp',
+			'saadparwaiz1/cmp_luasnip',
+			'L3MON4D3/LuaSnip',
+		},
+	},
+	{
+		'neovim/nvim-lspconfig',
+		requires = {
+			'williamboman/mason.nvim',
+			'williamboman/mason-lspconfig.nvim',
+		},
+	},
+	{
+		'ray-x/go.nvim',
+		requires = {
+			'ray-x/guihua.lua',
+		},
+	},
 	{
 		'nvim-telescope/telescope.nvim',
 		tag = '0.1.0',
