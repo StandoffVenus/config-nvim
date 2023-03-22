@@ -1,53 +1,57 @@
 -- Aliases for language to LSP
-local docker = 'dockerls'
-local lua = 'sumneko_lua'
-local protobuf = 'bufls'
-local go = 'gopls'
+local docker     = 'dockerls'
+local lua        = 'lua_ls'
+local protobuf   = 'bufls'
+local go         = 'gopls'
+local typescript = 'tsserver'
+local java       = 'jdtls'
 
 require('mason').setup()
 require("mason-lspconfig").setup({
-	ensure_installed = {
-		go,
-		docker,
-		lua,
-	},
+    ensure_installed = {
+        go,
+        docker,
+        lua,
+    },
 })
 
 local lspconfig = require('lspconfig')
 local cmp_lsp = require('cmp_nvim_lsp')
 
 local lsp_servers = {
-	protobuf,
-	docker,
-	go,
-	[lua] = {
-		Lua = {
-			runtime = {
-				version = 'LuaJIT'
-			},
-			diagnostics = {
-				globals = { 'vim' },
-			},
-			workspace = {
-				library = {
-					vim.api.nvim_get_runtime_file('', true),
-					[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-					[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-				},
-			},
-			telemetry = {
-				enable = false
-			},
-		},
-	},
+    protobuf,
+    docker,
+    go,
+    typescript,
+    java,
+    [lua] = {
+        Lua = {
+            runtime = {
+                version = 'LuaJIT'
+            },
+            diagnostics = {
+                globals = { 'vim' },
+            },
+            workspace = {
+                library = {
+                    vim.api.nvim_get_runtime_file('', true),
+                    [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                    [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+                },
+            },
+            telemetry = {
+                enable = false
+            },
+        },
+    },
 }
 
 local cmp_capabilities = cmp_lsp.default_capabilities()
 local on_attach = function(client, bufnr)
 	local bufopts = {
-		noremap = true,
-		silent = true,
-		buffer = bufnr,
+	    noremap = true,
+	    silent = true,
+	    buffer = bufnr,
 	}
 
 	vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, bufopts)
@@ -70,17 +74,17 @@ for k, v in pairs(lsp_servers) do
 	end
 
 	lspconfig[lsp].setup {
-		on_attach = on_attach,
-		capabilities = cmp_capabilities,
-		settings = settings,
+	    on_attach = on_attach,
+	    capabilities = cmp_capabilities,
+	    settings = settings,
 	}
 end
 
 vim.api.nvim_create_autocmd('BufWritePre', {
-	pattern = '*.lua',
-	callback = function()
-		vim.lsp.buf.format({ async = false })
-	end,
+    pattern = '*.lua',
+    callback = function()
+	    vim.lsp.buf.format({ async = false })
+    end,
 })
 
 -- Diagnostics
@@ -89,7 +93,7 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 
 vim.diagnostic.config({
-	virtual_text = true,
-	update_in_insert = true,
-	float = true,
+    virtual_text = true,
+    update_in_insert = true,
+    float = true,
 })
