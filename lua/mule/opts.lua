@@ -26,5 +26,5 @@ vim.opt.spelllang = { lang }
 vim.opt.filetype = 'on'
 vim.api.nvim_create_autocmd('FileType', {
     pattern = 'terraform',
-    command = [[ setlocal tabstop=2 shiftwidth=2 ]]
+    command = [[ setlocal tabstop=2 softtabstop=0 shiftwidth=2 expandtab ]]
 })
