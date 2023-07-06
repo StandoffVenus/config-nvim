@@ -18,6 +18,7 @@ end
 local plugins = {
     'wbthomason/packer.nvim', -- Packer can manage itself
     'preservim/nerdtree',
+    'rcarriga/nvim-notify',
     'tpope/vim-fugitive',
     {
         'hrsh7th/nvim-cmp',

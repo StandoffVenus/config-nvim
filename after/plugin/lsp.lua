@@ -47,7 +47,7 @@ local lsp_servers = {
 }
 
 local cmp_capabilities = cmp_lsp.default_capabilities()
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
 	local bufopts = {
 	    noremap = true,
 	    silent = true,
@@ -57,6 +57,7 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, bufopts)
 	vim.keymap.set('n', '<leader>ga', vim.lsp.buf.code_action, bufopts)
 	vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
+	vim.keymap.set('n', '<leader>gn', vim.lsp.buf.rename, bufopts)
 
 	vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
 	vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, bufopts)
