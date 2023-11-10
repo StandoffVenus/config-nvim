@@ -21,10 +21,3 @@ vim.opt.number = true -- Always enable line numbers
 local lang = get_env_lang() or 'en_us'
 vim.opt.spell = true
 vim.opt.spelllang = { lang }
-
--- Special tabbing for Terraform files
-vim.opt.filetype = 'on'
-vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'terraform',
-    command = [[ setlocal tabstop=2 softtabstop=0 shiftwidth=2 expandtab ]]
-})

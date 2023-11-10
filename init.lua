@@ -1,4 +1,5 @@
-require('mule.opts')
-require('mule.remaps')
-require('mule.packer')
+require('mule.filetypes')
 require('mule.lsp_extensions')
+require('mule.opts')
+require('mule.packer')
+require('mule.remaps')
