@@ -16,53 +16,53 @@ local function get_plugin_name(p)
 end
 
 local plugins = {
-    'wbthomason/packer.nvim', -- Packer can manage itself
-    'preservim/nerdtree',
-    'rcarriga/nvim-notify',
-    'tpope/vim-fugitive',
-    {
-        'hrsh7th/nvim-cmp',
-        requires = {
-            'f3fora/cmp-spell',
-            'hrsh7th/cmp-nvim-lsp',
-            'saadparwaiz1/cmp_luasnip',
-            'L3MON4D3/LuaSnip',
-        },
-    },
-    {
-        'neovim/nvim-lspconfig',
-        requires = {
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
-        },
-    },
-    {
-        'ray-x/go.nvim',
-        requires = {
-            'ray-x/guihua.lua',
-            'mfussenegger/nvim-dap',
-            'rcarriga/nvim-dap-ui',
-            'theHamsta/nvim-dap-virtual-text',
-        },
-    },
-    {
-        'nvim-telescope/telescope.nvim',
-        tag = '0.1.0',
-        requires = { { 'nvim-lua/plenary.nvim' } }
-    },
-    {
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-	        require('nvim-treesitter.install').update({ with_sync = true })()
-        end
-    },
-    {
-        'rose-pine/neovim',
-        as = 'rose-pine',
-        config = function()
-	        vim.cmd('colorscheme rose-pine')
-        end
-    },
+	'wbthomason/packer.nvim', -- Packer can manage itself
+	'preservim/nerdtree',
+	'rcarriga/nvim-notify',
+	'tpope/vim-fugitive',
+	{
+		'hrsh7th/nvim-cmp',
+		requires = {
+			'f3fora/cmp-spell',
+			'hrsh7th/cmp-nvim-lsp',
+			'saadparwaiz1/cmp_luasnip',
+			'L3MON4D3/LuaSnip',
+		},
+	},
+	{
+		'neovim/nvim-lspconfig',
+		requires = {
+			'williamboman/mason.nvim',
+			'williamboman/mason-lspconfig.nvim',
+		},
+	},
+	{
+		'ray-x/go.nvim',
+		requires = {
+			'ray-x/guihua.lua',
+			'mfussenegger/nvim-dap',
+			'rcarriga/nvim-dap-ui',
+			'theHamsta/nvim-dap-virtual-text',
+		},
+	},
+	{
+		'nvim-telescope/telescope.nvim',
+		tag = '0.1.0',
+		requires = { { 'nvim-lua/plenary.nvim' } }
+	},
+	{
+		'nvim-treesitter/nvim-treesitter',
+		run = function()
+			require('nvim-treesitter.install').update({ with_sync = true })()
+		end
+	},
+	{
+		'rose-pine/neovim',
+		as = 'rose-pine',
+		config = function()
+			vim.cmd('colorscheme rose-pine')
+		end
+	},
 }
 
 local function print(s)
@@ -70,11 +70,11 @@ local function print(s)
 end
 
 return require('packer').startup(function(use)
-	    print('plugins: {')
-	    for _, p in pairs(plugins) do
-		    use(p)
-		    print('  ' .. get_plugin_name(p) .. ',')
-	    end
+	print('plugins: {')
+	for _, p in pairs(plugins) do
+		use(p)
+		print('  ' .. get_plugin_name(p) .. ',')
+	end
 
-	    print('}')
-    end)
+	print('}')
+end)

@@ -22,9 +22,34 @@ local lang = get_env_lang() or 'en_us'
 vim.opt.spell = true
 vim.opt.spelllang = { lang }
 
--- Special tabbing for Terraform files
+-- Special file settings
 vim.opt.filetype = 'on'
-vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'terraform',
-    command = [[ setlocal tabstop=2 softtabstop=0 shiftwidth=2 expandtab ]]
-})
+local filetypes = {
+	terraform = {
+		tab_stop = 2,
+		soft_tab_stop = 0,
+		shift_width = 2,
+		expand_tab = true,
+	},
+	proto = {
+		tab_stop = 2,
+		soft_tab_stop = 0,
+		shift_width = 2,
+		expand_tab = true,
+	},
+}
+
+for p, ft in pairs(filetypes) do
+	local command = string.format('setlocal tabstop=%d softtabstop=%d shiftwidth=%d',
+		ft.tab_stop,
+		ft.soft_tab_stop,
+		ft.shift_width)
+	if ft.expand_tab then
+		command = command .. ' expandtab'
+	end
+
+	vim.api.nvim_create_autocmd('FileType', {
+		pattern = p,
+		command = command,
+	})
+end
