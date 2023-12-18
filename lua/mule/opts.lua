@@ -25,26 +25,27 @@ vim.opt.spelllang = { lang }
 -- Special file settings
 vim.opt.filetype = 'on'
 local filetypes = {
-	terraform = {
-		tab_stop = 2,
-		soft_tab_stop = 0,
-		shift_width = 2,
-		expand_tab = true,
-	},
-	proto = {
-		tab_stop = 2,
-		soft_tab_stop = 0,
-		shift_width = 2,
-		expand_tab = true,
-	},
+	'terraform',
+	'proto',
+	'sql',
 }
 
 for p, ft in pairs(filetypes) do
+	if type(p) == 'number' then
+		p = ft
+		ft = nil
+	end
+
+	local tab_stop = ft and ft.tab_stop or 2
+	local soft_tab_stop = ft and ft.soft_tab_stop or 0
+	local shift_width = ft and ft.shift_width or 2
+	local expand_tab = ft and ft.expand_tab or true
+
 	local command = string.format('setlocal tabstop=%d softtabstop=%d shiftwidth=%d',
-		ft.tab_stop,
-		ft.soft_tab_stop,
-		ft.shift_width)
-	if ft.expand_tab then
+		tab_stop,
+		soft_tab_stop,
+		shift_width)
+	if expand_tab then
 		command = command .. ' expandtab'
 	end
 
