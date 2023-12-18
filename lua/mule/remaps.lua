@@ -11,3 +11,9 @@ vim.api.nvim_create_autocmd(
 vim.keymap.set('n', '<leader>sh', function()
 	vim.cmd('te')
 end)
+
+vim.keymap.set(
+	'v',
+	'<leader>yy',
+	'"+y',
+	{ remap = true })
