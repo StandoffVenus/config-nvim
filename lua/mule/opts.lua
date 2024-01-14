@@ -15,7 +15,7 @@ local function get_env_lang()
 end
 
 vim.opt.splitright = true -- Always open splits to the right
-vim.opt.number = true -- Always enable line numbers
+vim.opt.number = true     -- Always enable line numbers
 
 -- Enable spell check
 local lang = get_env_lang() or 'en_us'
