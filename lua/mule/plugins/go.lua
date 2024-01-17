@@ -1,3 +1,5 @@
+local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+
 return {
 	'ray-x/go.nvim',
 
@@ -9,17 +11,11 @@ return {
 	},
 
 	config = function()
-		require('go').setup({
-			goimport = 'goimports',
-			test_runner = 'richgo',
-			icons = {
-				breakpoint = 'ⓑ',
-				current_pos = '➤',
-			},
-		})
+		require('go').setup()
 
-		vim.api.nvim_create_autocmd('BufWritePre', {
-			pattern = '*.go',
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			pattern  = "*.go",
+			group    = format_sync_grp,
 			callback = function() require('go.format').goimport() end,
 		})
 	end
