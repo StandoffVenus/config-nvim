@@ -1,10 +1,11 @@
 -- Aliases for language to LSP
-local docker     = 'dockerls'
-local lua        = 'lua_ls'
-local protobuf   = 'bufls'
-local go         = 'gopls'
-local typescript = 'tsserver'
-local java       = 'jdtls'
+local docker      = 'dockerls'
+local lua         = 'lua_ls'
+local protobuf    = 'bufls'
+local go          = 'gopls'
+local typescript  = 'tsserver'
+local java        = 'jdtls'
+local terraform   = 'terraformls'
 
 local lsp_servers = {
 	protobuf,
@@ -12,6 +13,7 @@ local lsp_servers = {
 	go,
 	typescript,
 	java,
+	terraform,
 	[lua] = {
 		Lua = {
 			runtime = {
@@ -34,7 +36,7 @@ local lsp_servers = {
 	},
 }
 
-local config = function()
+local config      = function()
 	local lspconfig = require('lspconfig')
 	local cmp_lsp = require('cmp_nvim_lsp')
 	local mason = require('mason')
@@ -43,7 +45,6 @@ local config = function()
 	mason.setup()
 	mason_lspconfig.setup({
 		ensure_installed = {
-			go,
 			docker,
 			lua,
 		},
@@ -86,6 +87,13 @@ local config = function()
 
 	vim.api.nvim_create_autocmd('BufWritePre', {
 		pattern = '*.lua',
+		callback = function()
+			vim.lsp.buf.format({ async = false })
+		end,
+	})
+
+	vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+		pattern = { "*.tf", "*.tfvars" },
 		callback = function()
 			vim.lsp.buf.format({ async = false })
 		end,

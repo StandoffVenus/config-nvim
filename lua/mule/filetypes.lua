@@ -1,16 +1,16 @@
 vim.opt.filetype = 'on'
 
 local filetypes = {
-    terraform = {},
-    sql       = {},
-    proto     = {},
+	terraform = {},
+	sql       = {},
+	proto     = {},
 }
 
 for pattern, opts in pairs(filetypes) do
 	local defaults = {
-	    tabstop     = 2,
-	    softtabstop = 0,
-	    shiftwidth  = 2,
+		tabstop     = 2,
+		softtabstop = 0,
+		shiftwidth  = 2,
 	}
 
 	local merged_opts = defaults
@@ -19,12 +19,12 @@ for pattern, opts in pairs(filetypes) do
 	end
 
 	local command = string.format([[ setlocal tabstop=%d softtabstop=%d shiftwidth=%d expandtab ]],
-	        merged_opts.tabstop,
-	        merged_opts.softtabstop,
-	        merged_opts.shiftwidth)
+		merged_opts.tabstop,
+		merged_opts.softtabstop,
+		merged_opts.shiftwidth)
 
 	vim.api.nvim_create_autocmd('FileType', {
-	    pattern = pattern,
-	    command = command,
+		pattern = pattern,
+		command = command,
 	})
 end
