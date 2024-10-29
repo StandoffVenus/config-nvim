@@ -3,17 +3,17 @@ local docker      = 'dockerls'
 local lua         = 'lua_ls'
 local protobuf    = 'bufls'
 local go          = 'gopls'
-local typescript  = 'tsserver'
 local java        = 'jdtls'
 local terraform   = 'terraformls'
+local zig         = 'zls'
 
 local lsp_servers = {
 	protobuf,
 	docker,
 	go,
-	typescript,
 	java,
 	terraform,
+	zig,
 	[lua] = {
 		Lua = {
 			runtime = {
@@ -36,36 +36,30 @@ local lsp_servers = {
 	},
 }
 
+local on_attach   = function(_, bufnr)
+	local bufopts = {
+		noremap = true,
+		silent = true,
+		buffer = bufnr,
+	}
+
+	vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, bufopts)
+	vim.keymap.set('n', '<leader>ga', vim.lsp.buf.code_action, bufopts)
+	vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
+	vim.keymap.set('n', '<leader>gn', vim.lsp.buf.rename, bufopts)
+
+	vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+	vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, bufopts)
+end
+
 local config      = function()
 	local lspconfig = require('lspconfig')
+
+	require('mason').setup()
+	require('mason-lspconfig').setup()
+
 	local cmp_lsp = require('cmp_nvim_lsp')
-	local mason = require('mason')
-	local mason_lspconfig = require('mason-lspconfig')
-
-	mason.setup()
-	mason_lspconfig.setup({
-		ensure_installed = {
-			docker,
-			lua,
-		},
-	})
-
 	local cmp_capabilities = cmp_lsp.default_capabilities()
-	local on_attach = function(_, bufnr)
-		local bufopts = {
-			noremap = true,
-			silent = true,
-			buffer = bufnr,
-		}
-
-		vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, bufopts)
-		vim.keymap.set('n', '<leader>ga', vim.lsp.buf.code_action, bufopts)
-		vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
-		vim.keymap.set('n', '<leader>gn', vim.lsp.buf.rename, bufopts)
-
-		vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-		vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, bufopts)
-	end
 
 	-- Set up all the LSP servers
 	for k, v in pairs(lsp_servers) do
@@ -109,9 +103,6 @@ local config      = function()
 		update_in_insert = true,
 		float = true,
 	})
-
-	local notify = require('notify')
-	notify('LSP config loaded', 'debug')
 end
 
 return {
