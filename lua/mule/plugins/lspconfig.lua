@@ -1,7 +1,8 @@
 -- Aliases for language to LSP
 local docker      = 'dockerls'
 local lua         = 'lua_ls'
-local protobuf    = 'bufls'
+local protobuf    = 'buf_ls'
+local gleam       = 'gleam'
 local go          = 'gopls'
 local java        = 'jdtls'
 local terraform   = 'terraformls'
@@ -10,6 +11,7 @@ local zig         = 'zls'
 local lsp_servers = {
 	protobuf,
 	docker,
+	gleam,
 	go,
 	java,
 	terraform,
@@ -63,13 +65,15 @@ local config      = function()
 
 	-- Set up all the LSP servers
 	for k, v in pairs(lsp_servers) do
-		local settings = nil
-		local lsp = v -- Assume that value is the LSP server name (initially)
+		local settings
+		local lsp
 
 		-- If the key is a string, that means we have a configured server
 		if type(k) == 'string' then
 			lsp = k
 			settings = v
+		else
+			lsp = v
 		end
 
 		lspconfig[lsp].setup {

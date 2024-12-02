@@ -1,9 +1,12 @@
 vim.opt.filetype = 'on'
 
+local terraform = 'terraform,terraform-vars,hcl'
+
 local filetypes = {
-	terraform = {},
-	sql       = {},
-	proto     = {},
+	[terraform] = {},
+	sql         = {},
+	proto       = {},
+	json        = {},
 }
 
 for pattern, opts in pairs(filetypes) do
