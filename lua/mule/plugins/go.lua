@@ -1,5 +1,3 @@
-local go_format_group = vim.api.nvim_create_augroup("GoFormat", {})
-
 return {
 	'ray-x/go.nvim',
 
@@ -12,6 +10,7 @@ return {
 	config = function()
 		require('go').setup()
 
+		local go_format_group = vim.api.nvim_create_augroup("GoFormat", {})
 		vim.api.nvim_create_autocmd('BufWritePre', {
 			pattern  = '*.go',
 			group    = go_format_group,

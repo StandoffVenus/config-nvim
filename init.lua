@@ -33,5 +33,5 @@ end
 
 for order, mod in pairs(loaded_mods) do
 	local msg = 'loaded module ' .. tostring(order) .. '. "' .. mod .. '"'
-	vim.notify(msg, vim.log.levels.DEBUG)
+	vim.notify(msg, DEBUG)
 end

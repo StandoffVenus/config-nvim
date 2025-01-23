@@ -6,28 +6,74 @@ vim.api.nvim_create_autocmd({ "InsertEnter" }, {
 	end
 })
 
+--- Guarantees to return an iterator, returning an exhausted one if `tbl` is nil.
+--- @param tbl table? The table to iterate.
+--- @return function
+--- @return table
+local function safe_pairs(tbl) return pairs(tbl or {}) end
+
+--- Appends a variadic number of arguments to the table in the "indexed" form.
+--- @param tbl table The table to append to.
+--- @param ... any The elements to append.
+local function append(tbl, ...)
+	local len = #tbl
+	for i, v in ipairs({ ... }) do
+		tbl[len + i] = v
+	end
+end
+
+--- Returns whether the provided string is empty (`nil` or blank)
+--- @param s string The string to examine.
+--- @return boolean is_empty Whether the string is empty. Will be `true` if `nil` is passed.
 local function string_empty(s)
-	return not s or s == ''
+	return (not s) or (s == '')
 end
 
-local function empty_response(resp)
-	return (not resp) or (#resp == 0)
+--- Returns whether the provided table is empty (no elements). `nil` values evaluate to `true`.
+--- @param tbl table The table to inspect emptiness of.
+--- @return boolean is_empty Whether the table is empty. Will be `true` if `nil` is passed.
+local function is_empty(tbl)
+	-- Fast path: table is nil, ergo empty
+	if not tbl then
+		return true
+	end
+
+	-- Fast path: the table has at least one numbered element
+	if #tbl > 0 then
+		return false
+	end
+
+	-- "Slow" path: have to iterate the table once to see if
+	-- it has any non-numbered elements
+	local has_elements = false
+	for _ in pairs(tbl) do
+		has_elements = true
+		break
+	end
+
+	return not has_elements
 end
 
--- Credit to ViRu-ThE-ViRuS
+
+-- This function will prompt to rename the identifier under the cursor, submitting a rename request to the LSP
+-- if a new name is provided.
+--
+-- The inspiration for this function comes from ViRu-ThE-ViRuS:
 -- https://github.com/ViRu-ThE-ViRuS/configs/blob/f992ed40026fa387f3a8727f3bbc9c0b59154841/nvim/lua/lsp-setup/handlers.lua
-
--- TODO: This function is gross; make less huge
 local function qf_rename()
 	local parameters = vim.lsp.util.make_position_params()
 	parameters.oldName = vim.fn.expand("<cword>")
 
 	vim.ui.input({ prompt = 'Rename> ', default = parameters.oldName }, function(input)
+		if not input then
+			return
+		end
+
 		parameters.newName = input
 
 		local notify_opts = {
 			title = string.format('rename: %s -> %s', parameters.oldName, parameters.newName),
-			timeout = 1000,
+			timeout = 5000,
 		}
 
 		local notify = function(msg, lvl)
@@ -38,67 +84,47 @@ local function qf_rename()
 			vim.notify(msg, lvl, notify_opts)
 		end
 
-		if input == nil then
-			notify('aborted rename', 'warn')
-			return
-		end
 
 		local method_rename = 'textDocument/rename'
-		vim.lsp.buf_request_all(0, method_rename, parameters, function(responses)
-			local notification, entries = '', {}
-			local num_files, num_updates = 0, 0
-			for client_id, response in ipairs(responses) do
-				local ctx = {
-					method    = method_rename,
-					client_id = client_id,
-				}
+		local function evaluate_response(client_id, response)
+			local ctx = {
+				method    = method_rename,
+				client_id = client_id,
+			}
 
-				vim.lsp.handlers[method_rename](
-					response.error,
-					response.result,
-					ctx)
+			local err = response.error
+			local result = response.result
+			vim.lsp.handlers[method_rename](err, result, ctx)
 
-				if empty_response(response) then
-					goto continue
-				end
-
-				for _, doc in ipairs(response.result.documentChanges) do
-					local uri = doc.textDocument.uri
-					local edits = doc.edits
-
-					num_files = num_files + 1
-					local bufnr = vim.uri_to_bufnr(uri)
-
-					for _, edit in ipairs(edits) do
-						local start_line = edit.range.start.line + 1
-						local line = vim.api.nvim_buf_get_lines(
-							bufnr,
-							start_line - 1,
-							start_line,
-							false)[1]
-
-						num_updates = num_updates + 1
-						table.insert(entries, {
-							bufnr = bufnr,
-							lnum = start_line,
-							col = edit.range.start.character + 1,
-							text = line
-						})
-					end
-
-					local short_uri = string.sub(vim.uri_to_fname(uri), #vim.fn.getcwd() + 2)
-					notification = notification ..
-					    string.format('made %d change(s) in %s', #edits, short_uri)
-				end
-
-				::continue::
+			if is_empty(result) then
+				return {}
 			end
 
-			if not string_empty(notification) then
-				notify(notification, 'info')
+			local notifications = {}
+			for file, changes in safe_pairs(result.changes) do
+				local uri = vim.uri_to_fname(file)
+				local num_changes = #changes
+				local notif = string.format('made %d change(s) in %s', num_changes, uri)
+
+				table.insert(notifications, notif)
+			end
+
+			return notifications
+		end
+
+		vim.lsp.buf_request_all(0, method_rename, parameters, function(responses)
+			local notifications = {}
+			for client_id, response in pairs(responses) do
+				append(notifications, unpack(evaluate_response(client_id, response)))
+			end
+
+			local msg = table.concat(notifications, '\n')
+			if not string_empty(msg) then
+				notify(msg, 'info')
 			end
 		end)
 	end)
 end
+
 
 vim.lsp.buf.rename = qf_rename
