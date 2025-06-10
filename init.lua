@@ -2,9 +2,9 @@ local DEBUG = vim.log.levels.DEBUG
 local ERROR = vim.log.levels.ERROR
 
 local modules = {
+	'theme', -- Gotta look pretty first
 	'remaps', -- Remaps have to happen before Lazy is loaded
 	'lazy',
-	'path',
 	'filetypes',
 	'lsp_extensions',
 	'opts',

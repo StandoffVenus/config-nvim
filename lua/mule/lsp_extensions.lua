@@ -60,7 +60,7 @@ end
 --
 -- The inspiration for this function comes from ViRu-ThE-ViRuS:
 -- https://github.com/ViRu-ThE-ViRuS/configs/blob/f992ed40026fa387f3a8727f3bbc9c0b59154841/nvim/lua/lsp-setup/handlers.lua
-local function qf_rename()
+vim.lsp.buf.rename = function()
 	local parameters = vim.lsp.util.make_position_params()
 	parameters.oldName = vim.fn.expand("<cword>")
 
@@ -125,6 +125,3 @@ local function qf_rename()
 		end)
 	end)
 end
-
-
-vim.lsp.buf.rename = qf_rename
