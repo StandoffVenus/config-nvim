@@ -10,14 +10,10 @@ local modules = {
 	'opts',
 }
 
-local config_dir = vim.fn.expand('~')
-if not config_dir then
-	local err --[[@as string]]
-	config_dir, err = vim.uv.os_homedir()
-	if not config_dir then
-		error(err)
-	end
-end
+local config_dir = vim.fn.stdpath('config')
+vim.fn.readdir(config_dir, function(name)
+	vim.notify('read file ' .. name, DEBUG)
+end)
 
 local mod_base = 'mule'
 local loaded_mods = {}
