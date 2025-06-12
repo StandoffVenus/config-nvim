@@ -1,33 +1,82 @@
 local DEBUG = vim.log.levels.DEBUG
 local ERROR = vim.log.levels.ERROR
 
-local modules = {
-	'theme', -- Gotta look pretty first
-	'remaps', -- Remaps have to happen before Lazy is loaded
-	'lazy',
-	'filetypes',
-	'lsp_extensions',
-	'opts',
-}
+if not table.pack then
+	if not pack then
+		--- @param ... any
+		--- @return table
+		pack = function(...)
+			local tbl = { ... } --[[@type table]]
+			tbl.n = select('#', ...) --[[@type integer]]
+			return tbl
+		end
+	end
 
-local config_dir = vim.fn.stdpath('config')
-vim.fn.readdir(config_dir, function(name)
-	vim.notify('read file ' .. name, DEBUG)
-end)
+	table.pack = pack
+end
 
-local mod_base = 'mule'
-local loaded_mods = {}
-for _, mod_name in pairs(modules) do
-	local mod = mod_base .. '.' .. mod_name
-	local ok, err = pcall(require, mod)
-	if not ok then
-		vim.notify('failed to load module "' .. mod .. '": ' .. tostring(err), ERROR)
-	else
-		table.insert(loaded_mods, mod)
+if not table.reverse then
+	--- @generic T
+	--- @param t T[]
+	--- @return T[]
+	table.reverse = function(t)
+		local r = {}
+		for _, v in ipairs(t) do
+			table.insert(r, 1, v)
+		end
+
+		return r
 	end
 end
 
-for order, mod in pairs(loaded_mods) do
-	local msg = 'loaded module ' .. tostring(order) .. '. "' .. mod .. '"'
-	vim.notify(msg, DEBUG)
+--- @type ('/'|'\\') sep The separator for file paths on this system.
+local filepath_seperator = package.config:sub(1, 1)
+
+--- @param ... string
+local function join_filepath(...)
+	local tbl = table.pack(...)
+	return vim.fn.resolve(table.concat(tbl, filepath_seperator))
+end
+
+--- @param n string The file name.
+--- @return (0|1)
+local matches_lua_file = function(n) return n:match('.lua$') and 1 or 0 end
+
+--- @generic T
+--- @param elems T[]
+--- @param  ... T The values to find and move to the front of the list. The values are moved in a stack order (FILO)
+local function move_to_front(elems, ...)
+	local args = table.reverse({ ... })
+	for _, match_v in ipairs(args) do
+		for i, elems_v in ipairs(elems) do
+			if match_v == elems_v then
+				local v = table.remove(elems, i)
+				table.insert(elems, 1, v)
+				break
+			end
+		end
+	end
+end
+
+local config_dir = vim.fn.stdpath('config')
+local mod_base = 'mule'
+local modules_dir = join_filepath(config_dir, 'lua', mod_base)
+local lua_files = vim.fn.readdir(modules_dir, matches_lua_file)
+
+local modules = {}
+for _, name in ipairs(lua_files) do
+	local trimmed_name = name:gsub('%.lua', '')
+	table.insert(modules, trimmed_name)
+end
+
+move_to_front(modules, 'theme', 'remaps')
+
+for _, mod in ipairs(modules) do
+	local full_name = mod_base .. '.' .. mod
+	local ok, err = pcall(require, full_name)
+	if not ok then
+		vim.notify('failed to load module ' .. full_name .. ': ' .. tostring(err), ERROR)
+	else
+		vim.notify('loaded module ' .. full_name, DEBUG)
+	end
 end
