@@ -1,6 +1,67 @@
 local DEBUG = vim.log.levels.DEBUG
 local ERROR = vim.log.levels.ERROR
 
+--- @generic T
+--- @param o T
+--- @return T
+local function copy(o, seen)
+	seen = seen or {}
+	if o == nil then return nil end
+	if seen[o] then return seen[o] end
+
+	local no
+	if type(o) == 'table' then
+		no = {}
+		seen[o] = no
+
+		for k, v in next, o, nil do
+			no[copy(k, seen)] = copy(v, seen)
+		end
+		setmetatable(no, copy(getmetatable(o), seen))
+	else -- number, string, boolean, etc
+		no = o
+	end
+
+	return no
+end
+
+if not table.copy then
+	--- @param t table?
+	--- @return table?
+	function table.copy(t, seen)
+		seen = seen or {}
+		if t == nil then return nil end
+		if seen[t] then return seen[t] end
+
+
+		local no = {}
+		seen[t] = no
+		setmetatable(no, copy(getmetatable(t), seen))
+
+		for k, v in next, t, nil do
+			k = (type(k) == 'table') and table.copy(k, seen) or k
+			v = (type(v) == 'table') and table.copy(v, seen) or v
+			no[k] = v
+		end
+		return no
+	end
+end
+
+if not table.reverse then
+	--- @generic T
+	--- @param t T[]
+	--- @return T[]
+	function table.reverse(t)
+		local r = {}
+		for _, v in ipairs(t) do
+			table.insert(r, 1, v)
+		end
+
+		return r
+	end
+end
+
+
 if not table.pack then
 	if not pack then
 		--- @param ... any
@@ -13,20 +74,6 @@ if not table.pack then
 	end
 
 	table.pack = pack
-end
-
-if not table.reverse then
-	--- @generic T
-	--- @param t T[]
-	--- @return T[]
-	table.reverse = function(t)
-		local r = {}
-		for _, v in ipairs(t) do
-			table.insert(r, 1, v)
-		end
-
-		return r
-	end
 end
 
 --- @type ('/'|'\\') sep The separator for file paths on this system.

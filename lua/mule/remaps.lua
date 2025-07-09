@@ -23,6 +23,9 @@ vim.keymap.set('n', '<leader>sh', function()
 	end
 end)
 
+-- Allows forcing a resize of the floating terminal window
+vim.keymap.set('n', '<leader>rh', function() win_term:resize() end)
+
 --- Open a read-only, temporary terminal in a split and
 --- feed it a user-supplied command.
 ---
