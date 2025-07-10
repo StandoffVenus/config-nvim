@@ -1,6 +1,12 @@
 return {
 	'ray-x/go.nvim',
 
+	-- The author accepted a stupid PR where "if err != nil" becomes unhighlighted.
+	-- Not only do I find this annoyingly unhelpful (my err checks now look like comments, awesome!)
+	-- it doesn't always work correctly, leading to inconsistent highlighting. This is the last version
+	-- before that change.
+	commit = 'a3455f4',
+
 	dependencies = {
 		'ray-x/guihua.lua',
 	},
